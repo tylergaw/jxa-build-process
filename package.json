@@ -1,0 +1,34 @@
+{
+  "name": "jxa-builder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {
+    "babelify": "^6.1.2",
+    "lodash": "^3.10.0",
+    "prompt": "^0.2.14",
+    "underscore": "^1.8.3",
+    "watch": "^0.16.0"
+  },
+  "config": {
+    "jsOutfile": "app.js",
+    "appMainJs": "Contents/Resources/Scripts/main.scpt",
+    "appName": "TestApp",
+    "bundleId": "com.tylergaw.testapp"
+  },
+  "scripts": {
+    "env": "env",
+    "reqs": "npm install -g browserify",
+    "watch": "watch 'npm run js' .",
+    "js:build": "browserify $npm_package_main --s app -t babelify -o $npm_package_config_jsOutfile",
+    "js:compile": "osacompile -l JavaScript -o $npm_package_config_appName.app/$npm_package_config_appMainJs $npm_package_config_jsOutfile",
+    "js": "npm run js:build && npm run js:compile",
+    "app:create": "osacompile -l JavaScript -s -o $npm_package_config_appName.app -e 'var created=1' && npm run app:setBundleId",
+    "app:setBundleId": "/usr/libexec/PlistBuddy -c 'Add :CFBundleIdentifier string com.tylergaw.testapp' $npm_package_config_appName.app/Contents/Info.plist",
+    "app:quit": "kill $(ps aux | grep $npm_package_config_appName | awk '{print $2}'); exit 0",
+    "app:open": "open $npm_package_config_appName.app",
+    "app": "npm run app:quit && npm run js && npm run app:open"
+  },
+  "author": "me@tylergaw.com",
+  "license": "ISC"
+}
