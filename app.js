@@ -3,9 +3,9 @@
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _stardust = require('./stardust');
+var _starstuff = require('starstuff');
 
-var _stardust2 = _interopRequireDefault(_stardust);
+var _starstuff2 = _interopRequireDefault(_starstuff);
 
 ObjC['import']('Cocoa');
 
@@ -16,6 +16,10 @@ var app = function app() {
 
   var logger = function logger(msg) {
     $.NSLog('%@', msg);
+  };
+
+  var larger = function larger(a, b) {
+    return a > b ? a : b;
   };
 
   ObjC.registerSubclass({
@@ -30,6 +34,8 @@ var app = function app() {
     }
   });
 
+  var appDelegate = $.AppDelegate.alloc.init;
+
   var fileSelected = function fileSelected(panelUrls) {
     var selectedFilePath = panelUrls[0].path;
     var imgId = 'chosenImage';
@@ -38,7 +44,7 @@ var app = function app() {
     if ($img) {
       $img.src(selectedFilePath);
     } else {
-      $img = _stardust2['default'].image({
+      $img = _starstuff2['default'].image({
         id: imgId,
         src: selectedFilePath,
         rect: [0, $mainWindow.height()]
@@ -49,25 +55,23 @@ var app = function app() {
 
     $mainWindow.find('#fileField').val(selectedFilePath);
 
-    $mainWindow.size($img.width() > minWidth ? $img.width() : minWidth, ($img.height() > minHeight ? $img.height() : minHeight) + ctrlsHeight).center();
+    $mainWindow.size(larger($img.width(), minWidth), larger($img.height(), minHeight) + ctrlsHeight).center();
   };
 
-  var appDelegate = $.AppDelegate.alloc.init;
-
-  var $mainWindow = _stardust2['default'].window({
+  var $mainWindow = _starstuff2['default'].window({
     title: 'Choose and Display Image',
     rect: [0, 0, 600, 85]
   }).delegate(appDelegate);
 
-  $mainWindow.append(_stardust2['default'].fieldLabel({
+  $mainWindow.append(_starstuff2['default'].fieldLabel({
     id: 'fileFieldLabel',
     value: 'Image: (jpg, png, or gif):',
     rect: [25, $mainWindow.height() - 40, 200, 24]
-  })).append(_stardust2['default'].textField({
+  })).append(_starstuff2['default'].textField({
     id: 'fileField',
     editable: false,
     rect: [25, $mainWindow.height() - 60, 350, 24]
-  })).append(_stardust2['default'].button({
+  })).append(_starstuff2['default'].button({
     id: 'chooseButton',
     title: 'Choose an image...',
     rect: [375, $mainWindow.height() - 62, 150, 25],
@@ -75,7 +79,7 @@ var app = function app() {
     action: 'click'
   }));
 
-  var panel = _stardust2['default'].openPanel({
+  var panel = _starstuff2['default'].openPanel({
     title: 'Choose an Image',
     allowedTypes: ['jpg', 'png', 'gif']
   });
@@ -89,25 +93,33 @@ var app = function app() {
 
 module.exports = app();
 
-},{"./stardust":2}],2:[function(require,module,exports){
+},{"starstuff":2}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+function _toConsumableArray(arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];return arr2;
+  } else {
+    return Array.from(arr);
+  }
+}
 
-var stardust = {};
+ObjC['import']('Cocoa');
+
+var starstuff = {};
 
 var isFunction = function isFunction(func) {
   var getType = {};
   return func && getType.toString.call(func) === '[object Function]';
 };
 
-stardust.setOpts = function () {
-  var defaults = arguments[0] === undefined ? {} : arguments[0];
-  var options = arguments[1] === undefined ? {} : arguments[1];
+starstuff.setOpts = function () {
+  var defaults = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+  var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
   return Object.assign({}, defaults, options);
 };
@@ -119,12 +131,12 @@ stardust.setOpts = function () {
 // ex:
 //   var xywh = [20, 20, 200, 20];
 //   startdust.makeRect(...xywh);
-stardust.makeRect = function (x, y, w, h) {
+starstuff.makeRect = function (x, y, w, h) {
   return $.NSMakeRect(x, y, w, h);
 };
 
-stardust.window = function (settings) {
-  var opts = stardust.setOpts({
+starstuff.window = function (settings) {
+  var opts = starstuff.setOpts({
     title: 'My Application',
     rect: [0, 0, 200, 200]
   }, settings);
@@ -135,10 +147,10 @@ stardust.window = function (settings) {
     // View hierarchy
     _h: [],
 
-    append: function append(stardustEl) {
-      this._h.push(stardustEl);
+    append: function append(starstuffEl) {
+      this._h.push(starstuffEl);
 
-      this.el.contentView.addSubview(stardustEl.el);
+      this.el.contentView.addSubview(starstuffEl.el);
       return this;
     },
 
@@ -186,7 +198,7 @@ stardust.window = function (settings) {
     },
 
     title: function title() {
-      var t = arguments[0] === undefined ? null : arguments[0];
+      var t = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (t) {
         this.el.title = t;
@@ -197,7 +209,7 @@ stardust.window = function (settings) {
     },
 
     delegate: function delegate() {
-      var d = arguments[0] === undefined ? null : arguments[0];
+      var d = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (d) {
         this.el.delegate = d;
@@ -214,7 +226,7 @@ stardust.window = function (settings) {
     rect: [0, 0, 400, 200],
 
     pos: function pos() {
-      var p = arguments[0] === undefined ? null : arguments[0];
+      var p = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (p) {
         this.rect[0] = p.x;
@@ -228,7 +240,7 @@ stardust.window = function (settings) {
     },
 
     width: function width() {
-      var w = arguments[0] === undefined ? null : arguments[0];
+      var w = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (w) {
         this.rect[2] = w;
@@ -239,7 +251,7 @@ stardust.window = function (settings) {
     },
 
     height: function height() {
-      var h = arguments[0] === undefined ? null : arguments[0];
+      var h = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (h) {
         this.rect[3] = h;
@@ -252,7 +264,7 @@ stardust.window = function (settings) {
     size: function size(w, h) {
       this.width(w);
       this.height(h);
-      this.el.setFrameDisplay(stardust.makeRect.apply(stardust, _toConsumableArray(this.rect)), true);
+      this.el.setFrameDisplay(starstuff.makeRect.apply(starstuff, _toConsumableArray(this.rect)), true);
       return this;
     }
   };
@@ -265,7 +277,7 @@ stardust.window = function (settings) {
   obj.width(opts.rect[2]);
   obj.height(opts.rect[3]);
 
-  obj.el = $.NSWindow.alloc.initWithContentRectStyleMaskBackingDefer(stardust.makeRect.apply(stardust, _toConsumableArray(obj.rect)), styleMask, $.NSBackingStoreBuffered, false);
+  obj.el = $.NSWindow.alloc.initWithContentRectStyleMaskBackingDefer(starstuff.makeRect.apply(starstuff, _toConsumableArray(obj.rect)), styleMask, $.NSBackingStoreBuffered, false);
 
   obj.center();
   obj.el.makeKeyAndOrderFront(obj.el);
@@ -275,14 +287,14 @@ stardust.window = function (settings) {
   return obj;
 };
 
-stardust.openPanel = function (settings) {
-  var opts = stardust.setOpts({
+starstuff.openPanel = function (settings) {
+  var opts = starstuff.setOpts({
     title: 'Open'
   }, settings);
 
   var obj = {
     title: function title() {
-      var t = arguments[0] === undefined ? null : arguments[0];
+      var t = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (t) {
         this.el.title = t;
@@ -296,7 +308,7 @@ stardust.openPanel = function (settings) {
      * @param t {Array}
      */
     allowedTypes: function allowedTypes() {
-      var t = arguments[0] === undefined ? null : arguments[0];
+      var t = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (t) {
         // We use `$()` to convert the JS array to an NSArray
@@ -308,7 +320,7 @@ stardust.openPanel = function (settings) {
     },
 
     open: function open() {
-      var ok = arguments[0] === undefined ? null : arguments[0];
+      var ok = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (this.el.runModal == $.NSOKButton) {
         if (ok && isFunction(ok)) {
@@ -321,7 +333,7 @@ stardust.openPanel = function (settings) {
 
     _id: null,
     id: function id() {
-      var i = arguments[0] === undefined ? null : arguments[0];
+      var i = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (i) {
         this._id = i;
@@ -348,8 +360,8 @@ stardust.openPanel = function (settings) {
   return obj;
 };
 
-stardust.button = function (settings) {
-  var opts = stardust.setOpts({
+starstuff.button = function (settings) {
+  var opts = starstuff.setOpts({
     title: 'Button',
     rect: [25, 25, 150, 24],
     bezelStyle: $.NSRoundedBezelStyle,
@@ -360,7 +372,7 @@ stardust.button = function (settings) {
 
   var obj = {
     title: function title() {
-      var t = arguments[0] === undefined ? null : arguments[0];
+      var t = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (t) {
         this.el.title = t;
@@ -371,7 +383,7 @@ stardust.button = function (settings) {
     },
 
     bezelStyle: function bezelStyle() {
-      var b = arguments[0] === undefined ? null : arguments[0];
+      var b = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (b) {
         this.el.bezelStyle = b;
@@ -382,7 +394,7 @@ stardust.button = function (settings) {
     },
 
     buttonType: function buttonType() {
-      var b = arguments[0] === undefined ? null : arguments[0];
+      var b = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (b) {
         this.el.buttonType = b;
@@ -393,7 +405,7 @@ stardust.button = function (settings) {
     },
 
     target: function target() {
-      var t = arguments[0] === undefined ? null : arguments[0];
+      var t = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (t) {
         this.el.target = t;
@@ -404,7 +416,7 @@ stardust.button = function (settings) {
     },
 
     action: function action() {
-      var a = arguments[0] === undefined ? null : arguments[0];
+      var a = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (a) {
         this.el.action = a;
@@ -416,7 +428,7 @@ stardust.button = function (settings) {
 
     _id: null,
     id: function id() {
-      var i = arguments[0] === undefined ? null : arguments[0];
+      var i = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (i) {
         this._id = i;
@@ -427,7 +439,7 @@ stardust.button = function (settings) {
     }
   };
 
-  obj.el = $.NSButton.alloc.initWithFrame(stardust.makeRect.apply(stardust, _toConsumableArray(opts.rect)));
+  obj.el = $.NSButton.alloc.initWithFrame(starstuff.makeRect.apply(starstuff, _toConsumableArray(opts.rect)));
   obj.classString = $.NSStringFromClass(obj.el['class']).js;
 
   obj.title(opts.title);
@@ -448,15 +460,15 @@ stardust.button = function (settings) {
   return obj;
 };
 
-stardust.textField = function (settings) {
-  var opts = stardust.setOpts({
+starstuff.textField = function (settings) {
+  var opts = starstuff.setOpts({
     editable: true,
     rect: [25, 25, 200, 24]
   }, settings);
 
   var obj = {
     editable: function editable() {
-      var b = arguments[0] === undefined ? null : arguments[0];
+      var b = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (b !== null) {
         this.el.editable = b;
@@ -468,7 +480,7 @@ stardust.textField = function (settings) {
 
     _id: null,
     id: function id() {
-      var i = arguments[0] === undefined ? null : arguments[0];
+      var i = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (i) {
         this._id = i;
@@ -479,7 +491,7 @@ stardust.textField = function (settings) {
     },
 
     val: function val() {
-      var v = arguments[0] === undefined ? null : arguments[0];
+      var v = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (v) {
         this.el.stringValue = v;
@@ -490,7 +502,7 @@ stardust.textField = function (settings) {
     }
   };
 
-  obj.el = $.NSTextField.alloc.initWithFrame(stardust.makeRect.apply(stardust, _toConsumableArray(opts.rect)));
+  obj.el = $.NSTextField.alloc.initWithFrame(starstuff.makeRect.apply(starstuff, _toConsumableArray(opts.rect)));
   obj.classString = $.NSStringFromClass(obj.el['class']).js;
 
   if (opts.id) {
@@ -502,8 +514,8 @@ stardust.textField = function (settings) {
   return obj;
 };
 
-stardust.fieldLabel = function (settings) {
-  var opts = stardust.setOpts({
+starstuff.fieldLabel = function (settings) {
+  var opts = starstuff.setOpts({
     value: 'Field label',
     rect: [25, 25, 200, 24],
     drawsBackground: false,
@@ -513,7 +525,7 @@ stardust.fieldLabel = function (settings) {
 
   var obj = {
     val: function val() {
-      var v = arguments[0] === undefined ? null : arguments[0];
+      var v = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (v) {
         this.el.stringValue = v;
@@ -524,7 +536,7 @@ stardust.fieldLabel = function (settings) {
     },
 
     drawsBackground: function drawsBackground() {
-      var b = arguments[0] === undefined ? null : arguments[0];
+      var b = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (b !== null) {
         this.el.drawsBackground = b;
@@ -535,7 +547,7 @@ stardust.fieldLabel = function (settings) {
     },
 
     bezeled: function bezeled() {
-      var b = arguments[0] === undefined ? null : arguments[0];
+      var b = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (b !== null) {
         this.el.bezeled = b;
@@ -546,7 +558,7 @@ stardust.fieldLabel = function (settings) {
     },
 
     selectable: function selectable() {
-      var s = arguments[0] === undefined ? null : arguments[0];
+      var s = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (s !== null) {
         this.el.selectable = s;
@@ -558,7 +570,7 @@ stardust.fieldLabel = function (settings) {
 
     _id: null,
     id: function id() {
-      var i = arguments[0] === undefined ? null : arguments[0];
+      var i = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (i) {
         this._id = i;
@@ -569,7 +581,7 @@ stardust.fieldLabel = function (settings) {
     }
   };
 
-  obj.el = $.NSTextField.alloc.initWithFrame(stardust.makeRect.apply(stardust, _toConsumableArray(opts.rect)));
+  obj.el = $.NSTextField.alloc.initWithFrame(starstuff.makeRect.apply(starstuff, _toConsumableArray(opts.rect)));
   obj.classString = $.NSStringFromClass(obj.el['class']).js;
 
   obj.val(opts.value);
@@ -587,8 +599,8 @@ stardust.fieldLabel = function (settings) {
   return obj;
 };
 
-stardust.image = function (settings) {
-  var opts = stardust.setOpts({
+starstuff.image = function (settings) {
+  var opts = starstuff.setOpts({
     src: null
   }, settings);
 
@@ -596,7 +608,7 @@ stardust.image = function (settings) {
     rect: [0, 0, 0, 0],
 
     src: function src() {
-      var s = arguments[0] === undefined ? null : arguments[0];
+      var s = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (s) {
         var img = s;
@@ -617,7 +629,7 @@ stardust.image = function (settings) {
     },
 
     pos: function pos() {
-      var p = arguments[0] === undefined ? null : arguments[0];
+      var p = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (p) {
         this.rect[0] = p.x;
@@ -631,7 +643,7 @@ stardust.image = function (settings) {
     },
 
     width: function width() {
-      var w = arguments[0] === undefined ? null : arguments[0];
+      var w = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (w) {
         this.rect[2] = w;
@@ -642,7 +654,7 @@ stardust.image = function (settings) {
     },
 
     height: function height() {
-      var h = arguments[0] === undefined ? null : arguments[0];
+      var h = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (h) {
         this.rect[3] = h;
@@ -663,7 +675,7 @@ stardust.image = function (settings) {
 
     _id: null,
     id: function id() {
-      var i = arguments[0] === undefined ? null : arguments[0];
+      var i = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
       if (i) {
         this._id = i;
@@ -679,7 +691,7 @@ stardust.image = function (settings) {
     y: opts.rect[1]
   });
 
-  obj.el = $.NSImageView.alloc.initWithFrame(stardust.makeRect.apply(stardust, _toConsumableArray(obj.rect)));
+  obj.el = $.NSImageView.alloc.initWithFrame(starstuff.makeRect.apply(starstuff, _toConsumableArray(obj.rect)));
   obj.classString = $.NSStringFromClass(obj.el['class']).js;
 
   if (opts.src) {
@@ -705,7 +717,7 @@ stardust.image = function (settings) {
   return obj;
 };
 
-exports['default'] = stardust;
+exports['default'] = starstuff;
 module.exports = exports['default'];
 
 },{}]},{},[1])(1)
